@@ -15,7 +15,7 @@ namespace TriviaApi.Entities
             get => _pageSize;
             set => _pageSize = (value > _pageSize) ? maxPageSizes : value;
         }
-        public string Orderby { get; set; } = "Category";
+        public string Orderby { get; set; } = "Id";
         public string Fields { get; set; }
     }
 }
