@@ -12,8 +12,8 @@ namespace TriviaApi.Model
         [Key]
         public Guid Id { get; set; }
         public string Question { get; set; }
-        public string Answers { get; set; }
-        public Category Category { get; set; }
-        public Difficulty Difficulty { get; set; }
+        public string Answer { get; set; }
+        public string Category { get; set; }
+        public string Difficulty { get; set; }
     }
 }
