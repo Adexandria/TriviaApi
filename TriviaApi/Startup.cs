@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,9 +31,11 @@ namespace TriviaApi
         {
             services.AddControllers();
             services.AddScoped<IData,DataRepos>();
+            services.AddTransient<IPropertyMappingService, PropertyMappingService>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddDbContext<Dbcontext>(opt => 
             {
-                opt.UseSqlServer(Configuration.GetConnectionString("Trivia")); 
+                opt.UseSqlServer(Configuration.GetConnectionString("Trivia")).EnableSensitiveDataLogging(); 
             });
         }
 
@@ -41,6 +45,17 @@ namespace TriviaApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler(appBuilder =>
+                {
+                    appBuilder.Run(async context =>
+                    {
+                        context.Response.StatusCode = 500;
+                        await context.Response.WriteAsync("An unexpected fault happened. Try again later.");
+                    });
+                });
             }
 
             app.UseHttpsRedirection();
