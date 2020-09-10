@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TriviaApi.Entities;
 using TriviaApi.Helpers;
@@ -58,6 +59,37 @@ namespace TriviaApi.Controllers
             };
             return Ok(linkCollection);
         }
+        [HttpGet("{id}",Name ="Question")]
+        public async Task<ActionResult<QuestionDto>> GetQuestionById(Guid id)
+        {
+            var question = await data.GetById(id);
+            if(id == null)
+            {
+                return NotFound();
+            }
+            var questionDto = mapper.Map<QuestionDto>(question);
+            return Ok(questionDto);
+        }
+        [HttpPost("{id}",Name ="PostQuestion")]
+        public async Task<ActionResult<QuestionDto>> PostAnswer(Guid id,AnswerDto answer)
+        {
+            var question = await data.GetById(id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            if (question.Answers.ToLower().Contains(answer.Answer.ToLower()))
+            {
+                return this.StatusCode(StatusCodes.Status202Accepted,"Answer is corrrect!!!!!!");
+            }
+            else
+            {
+              
+              return this.StatusCode(StatusCodes.Status406NotAcceptable, "Answer is wrong!!!pls try again");
+            }
+           
+        }
         private string CreateQuestionUrl(Paging sizes, ResourceUriType type)
         {
             switch (type)
@@ -89,6 +121,7 @@ namespace TriviaApi.Controllers
             }
 
         }
+       
         private IEnumerable<LinkDto> CreateQuestionLink(Guid id, string field)
         {
             var link = new List<LinkDto>();
@@ -100,6 +133,7 @@ namespace TriviaApi.Controllers
             {
                 link.Add(new LinkDto(Url.Link("Question", new { id, field }), "self", "GET"));
             }
+            link.Add(new LinkDto(Url.Link("PostQuestion", new { id }), "PostAnswer", "Post"));
             return link;
         }
 
