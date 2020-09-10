@@ -10,6 +10,7 @@ namespace TriviaApi.Service
    public interface IData
     {
         public PageList<Trivia> GetTrivia(Paging paging);
+       
         public Task<Trivia> GetById(Guid id);
     }
 }

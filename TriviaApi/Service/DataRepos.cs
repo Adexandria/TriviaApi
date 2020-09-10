@@ -19,6 +19,9 @@ namespace TriviaApi.Service
             this.propertyMapping = propertyMapping ?? throw new NullReferenceException(nameof(propertyMapping));
         }
 
+       
+
+
         public async Task<Trivia> GetById(Guid id)
         {
             if(id== null)
